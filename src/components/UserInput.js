@@ -21,6 +21,7 @@ const UserInput = () => {
     const [chest_build_data, setChestBuildData] = useState([]);
     const [legs_build_data, setLegsBuildData] = useState([]);
     const [class_build_data, setClassBuildData] = useState([]);
+    const [raw_build_data, setRawBuildData] = useState([]);
 
     useEffect(() => {
         getModData()
@@ -85,6 +86,29 @@ const UserInput = () => {
         }
     }
 
+    const translateSymbol = (symbolText) => {
+        switch (symbolText) {
+            case "percentage":
+                return "%";
+            case "addition":
+                return "+";
+            case "subtraction":
+                return "-";
+            default:
+                return "&&";
+        }
+    }
+
+    const outputRawAsStuff = () => {
+        if (!!raw_build_data && raw_build_data.length > 0) {
+            return raw_build_data.map((ts, i) => {
+                return (
+                    <p>{ts['impact']} {translateSymbol(ts['value_modifier'])}{ts['curr_value']}</p>
+                )
+            });
+        }
+    }
+
     const submitValue = () => {
         const frmdetails = {
             'First Name' : inVal,
@@ -97,7 +121,7 @@ const UserInput = () => {
 
 
     const getModData = () => {
-        fetch(`http://${process.env.REACT_APP_API_URL}/api/mods`,
+        fetch(`http://18.206.115.8:5000/api/mods`,
             {
                 method: "GET",
                 headers: {
@@ -114,7 +138,7 @@ const UserInput = () => {
     }
 
     const getModAttrData = () => {
-        fetch(`http://${process.env.REACT_APP_API_URL}/api/mods/attributes`,
+        fetch(`http://18.206.115.8:5000/api/mods/attributes`,
             {
                 method: "GET",
                 headers: {
@@ -131,7 +155,7 @@ const UserInput = () => {
     }
 
     const postBuildData = () => {
-        fetch(`http://${process.env.REACT_APP_API_URL}/api/build`,
+        fetch(`http://18.206.115.8:5000/api/build`,
             {
                 method: "POST",
                 body: JSON.stringify({"mod_ids": helmBuildData}),
@@ -144,8 +168,7 @@ const UserInput = () => {
                 console.log(apiData)
                 apiData.json().then((moreData) => {
                     console.log(moreData)
-                    // moreData.map((a) => hintArray.push(a.name))
-                    // setAPIData(hintArray)
+                    setRawBuildData(moreData.data)
                 })
 
             });
@@ -157,32 +180,32 @@ const UserInput = () => {
                 <h2>Inputs</h2>
             </div>
             <div>
-            <Grid verticalAlign={"middle"}>
-                <Grid.Row columns={7}>
-                    <Grid.Column>
-                        <h5>Helmet</h5>
-                    </Grid.Column>
-                    <Grid.Column>
-                        <DropdownExampleSearchSelection piece={'helm'} idx={0}/>
-                    </Grid.Column>
-                    <Grid.Column>
-                        <DropdownExampleSearchSelection piece={'helm'} idx={1}/>
-                    </Grid.Column>
-                    <Grid.Column>
-                        <DropdownExampleSearchSelection piece={'helm'} idx={2}/>
-                    </Grid.Column>
-                    <Grid.Column>
-                        <DropdownExampleSearchSelection piece={'helm'} idx={3}/>
-                    </Grid.Column>
-                    <Grid.Column>
-                        <DropdownExampleSearchSelection piece={'helm'} idx={4}/>
-                    </Grid.Column>
-                    <Grid.Column>
-                        <p>Stuff: {`${helmBuildData}`}</p>
-                    </Grid.Column>
-                </Grid.Row>
-            </Grid>
-            <ButtonComponent onClickFunction={postBuildData} label={"Submit"}/>
+                <Grid verticalAlign={"middle"}>
+                    <Grid.Row columns={7}>
+                        <Grid.Column>
+                            <h5>Helmet</h5>
+                        </Grid.Column>
+                        <Grid.Column>
+                            <DropdownExampleSearchSelection piece={'helm'} idx={0}/>
+                        </Grid.Column>
+                        <Grid.Column>
+                            <DropdownExampleSearchSelection piece={'helm'} idx={1}/>
+                        </Grid.Column>
+                        <Grid.Column>
+                            <DropdownExampleSearchSelection piece={'helm'} idx={2}/>
+                        </Grid.Column>
+                        <Grid.Column>
+                            <DropdownExampleSearchSelection piece={'helm'} idx={3}/>
+                        </Grid.Column>
+                        <Grid.Column>
+                            <DropdownExampleSearchSelection piece={'helm'} idx={4}/>
+                        </Grid.Column>
+                        <Grid.Column>
+                            <p>Stuff: {`${helmBuildData}`}</p>
+                        </Grid.Column>
+                    </Grid.Row>
+                </Grid>
+                <ButtonComponent onClickFunction={postBuildData} label={"Submit"}/>
                 {/*<div className={`col-md-4 mb-3`}>*/}
                 {/*    <Dropdown>*/}
                 {/*        <Dropdown.Toggle variant="success" id="dropdown-basic">*/}
@@ -212,7 +235,9 @@ const UserInput = () => {
 
                 {/*</div>*/}
             </div>
-
+            <div>
+                {outputRawAsStuff()}
+            </div>
         </div>
     )
 }
