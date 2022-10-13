@@ -121,7 +121,7 @@ const UserInput = () => {
 
 
     const getModData = () => {
-        fetch(`http://18.206.115.8:5000/api/mods`,
+        fetch(`http://localhost:3001/api/mods`,
             {
                 method: "GET",
                 headers: {
@@ -138,7 +138,7 @@ const UserInput = () => {
     }
 
     const getModAttrData = () => {
-        fetch(`http://18.206.115.8:5000/api/mods/attributes`,
+        fetch(`http://localhost:3001/api/mods/attributes`,
             {
                 method: "GET",
                 headers: {
@@ -155,7 +155,7 @@ const UserInput = () => {
     }
 
     const postBuildData = () => {
-        fetch(`http://18.206.115.8:5000/api/build`,
+        fetch(`http://localhost:3001/api/build`,
             {
                 method: "POST",
                 body: JSON.stringify({"mod_ids": helmBuildData}),
