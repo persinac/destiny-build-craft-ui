@@ -1,6 +1,9 @@
 # ==== CONFIGURE =====
 # Use a Node 16 base image
 FROM node:16-alpine
+RUN apt update
+RUN apt-get install vim -y
+RUN apt-get install lsof -y
 # Set the working directory to /app inside the container
 WORKDIR /app
 # Copy app files
