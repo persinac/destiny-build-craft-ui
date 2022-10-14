@@ -121,12 +121,11 @@ const UserInput = () => {
 
 
     const getModData = () => {
-        fetch(`http://localhost:3001/api/mods`,
+        fetch(`https://destinybuildcraft.io/api/mods`,
             {
                 method: "GET",
                 headers: {
-                    'Content-Type': 'application/json',
-                    'Access-Control-Allow-Origin': '*'
+                    'Content-Type': 'application/json'
                 }
             })
             .then((apiData) => {
@@ -138,12 +137,11 @@ const UserInput = () => {
     }
 
     const getModAttrData = () => {
-        fetch(`http://localhost:3001/api/mods/attributes`,
+        fetch(`https://destinybuildcraft.io/api/mods/attributes`,
             {
                 method: "GET",
                 headers: {
-                    'Content-Type': 'application/json',
-                    'Access-Control-Allow-Origin': '*'
+                    'Content-Type': 'application/json'
                 }
             })
             .then((apiData) => {
@@ -155,13 +153,12 @@ const UserInput = () => {
     }
 
     const postBuildData = () => {
-        fetch(`http://localhost:3001/api/build`,
+        fetch(`https://destinybuildcraft.io/api/build`,
             {
                 method: "POST",
                 body: JSON.stringify({"mod_ids": helmBuildData}),
                 headers: {
-                    'Content-Type': 'application/json',
-                    'Access-Control-Allow-Origin': '*'
+                    'Content-Type': 'application/json'
                 }
             })
             .then((apiData) => {
