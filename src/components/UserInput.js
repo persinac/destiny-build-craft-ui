@@ -1,6 +1,8 @@
 import React, {useEffect, useState} from "react";
-import {Dropdown, Grid} from "semantic-ui-react";
 import ButtonComponent from "./General/Button";
+import { AppContext } from '../stupidContext';
+import ArmorBuilder from "./Grid/ArmorBuilder";
+import {getModData, getModAttrData, postBuildData} from "../api"
 
 /*****
  * How could we make the input easier to use? Make is a self contained function with its own state
@@ -8,13 +10,8 @@ import ButtonComponent from "./General/Button";
 * */
 const UserInput = () => {
     // the key with this type of setup is that we need a line & f(x) for each input
-    const [inVal, setVal] = useState("");
     const [modList, setModList] = useState([]);
     const [modAttrList, setModAttrList] = useState([]);
-    const [file, setFile] = useState(null);
-    const [selectVal, setSelectVal] = useState('');
-    const [text, setText] = useState([]);
-    const [data, setAPIData] = useState([]);
     const [valueOptions, setValueOptions] = useState([]);
     const [helmBuildData, setHelmBuildData] = useState([]);
     const [arms_build_data, setArmsBuildData] = useState([]);
@@ -24,8 +21,8 @@ const UserInput = () => {
     const [raw_build_data, setRawBuildData] = useState([]);
 
     useEffect(() => {
-        getModData()
-        getModAttrData()
+        getModData().then((data) => {setModList(data['data'])})
+        getModAttrData().then((data) => {setModAttrList(data['data'])})
     }, [])
 
     useEffect(() => {
@@ -33,7 +30,6 @@ const UserInput = () => {
     }, [modList, modAttrList])
 
     const parseValueOptionsForDropdown = () => {
-        console.log(process.env.API_URL)
         const listOfObjs = []
         modList.forEach((val, idx) => {
             listOfObjs.push({ key: val['id'], value: val['id'], text: val['name'] })
@@ -41,30 +37,7 @@ const UserInput = () => {
         setValueOptions(listOfObjs)
     }
 
-    const outputBuildData = (data) => {
-        console.log(data)
-        return (
-            <p>{[...data]}</p>
-        )
-    }
-
-    const DropdownExampleSearchSelection = ({piece, idx}) => (
-        <Dropdown
-            placeholder='Select Mod'
-            fluid
-            search
-            selection
-            clearable
-            value={helmBuildData[idx]}
-            options={valueOptions}
-            onChange={setBuildData}
-            piece={piece}
-            idx={idx}
-        />
-    )
-
-    const setBuildData = (event, {value, piece, idx}) => {
-        event.persist()
+    const setBuildData2 = (event, {value, piece, idx}) => {
         switch (piece) {
             case 'helm':
                 setHelmBuildData(existingItems => {
@@ -73,16 +46,28 @@ const UserInput = () => {
                 })
                 break;
             case 'arms':
-                setArmsBuildData(value)
+                setArmsBuildData(existingItems => {
+                    existingItems[idx] = value
+                    return [...existingItems]
+                })
                 break;
             case 'chest':
-                setChestBuildData(value)
+                setChestBuildData(existingItems => {
+                    existingItems[idx] = value
+                    return [...existingItems]
+                })
                 break;
             case 'legs':
-                setLegsBuildData(value)
+                setLegsBuildData(existingItems => {
+                    existingItems[idx] = value
+                    return [...existingItems]
+                })
                 break;
             case 'class':
-                setClassBuildData(value)
+                setClassBuildData(existingItems => {
+                    existingItems[idx] = value
+                    return [...existingItems]
+                })
                 break;
         }
     }
@@ -110,66 +95,13 @@ const UserInput = () => {
         }
     }
 
-    const submitValue = () => {
-        const frmdetails = {
-            'First Name' : inVal,
-            'File' : file,
-            'Phone' : text,
-            'selectVal' : selectVal
-        }
-        console.log(frmdetails);
-    }
-
-
-    const getModData = () => {
-        fetch(`${process.env.API_URL}/api/mods`,
-            {
-                method: "GET",
-                headers: {
-                    'Content-Type': 'application/json'
-                }
+    const postBuildDataLocal = () => {
+        const listOfIds = helmBuildData.concat(arms_build_data, chest_build_data, legs_build_data, class_build_data)
+        console.log(listOfIds)
+        postBuildData(listOfIds)
+            .then((data) => {
+                setRawBuildData(data['data'])
             })
-            .then((apiData) => {
-                console.log(apiData)
-                apiData.json().then((moreData) => {
-                    setModList(moreData['data'])
-                })
-            });
-    }
-
-    const getModAttrData = () => {
-        fetch(`${process.env.API_URL}/api/mods/attributes`,
-            {
-                method: "GET",
-                headers: {
-                    'Content-Type': 'application/json'
-                }
-            })
-            .then((apiData) => {
-                console.log(apiData)
-                apiData.json().then((moreData) => {
-                    setModAttrList(moreData['data'])
-                })
-            });
-    }
-
-    const postBuildData = () => {
-        fetch(`${process.env.API_URL}/api/build`,
-            {
-                method: "POST",
-                body: JSON.stringify({"mod_ids": helmBuildData}),
-                headers: {
-                    'Content-Type': 'application/json'
-                }
-            })
-            .then((apiData) => {
-                console.log(apiData)
-                apiData.json().then((moreData) => {
-                    console.log(moreData)
-                    setRawBuildData(moreData.data)
-                })
-
-            });
     }
 
     return (
@@ -178,60 +110,16 @@ const UserInput = () => {
                 <h2>Inputs</h2>
             </div>
             <div>
-                <Grid verticalAlign={"middle"}>
-                    <Grid.Row columns={7}>
-                        <Grid.Column>
-                            <h5>Helmet</h5>
-                        </Grid.Column>
-                        <Grid.Column>
-                            <DropdownExampleSearchSelection piece={'helm'} idx={0}/>
-                        </Grid.Column>
-                        <Grid.Column>
-                            <DropdownExampleSearchSelection piece={'helm'} idx={1}/>
-                        </Grid.Column>
-                        <Grid.Column>
-                            <DropdownExampleSearchSelection piece={'helm'} idx={2}/>
-                        </Grid.Column>
-                        <Grid.Column>
-                            <DropdownExampleSearchSelection piece={'helm'} idx={3}/>
-                        </Grid.Column>
-                        <Grid.Column>
-                            <DropdownExampleSearchSelection piece={'helm'} idx={4}/>
-                        </Grid.Column>
-                        <Grid.Column>
-                            <p>Stuff: {`${helmBuildData}`}</p>
-                        </Grid.Column>
-                    </Grid.Row>
-                </Grid>
-                <ButtonComponent onClickFunction={postBuildData} label={"Submit"}/>
-                {/*<div className={`col-md-4 mb-3`}>*/}
-                {/*    <Dropdown>*/}
-                {/*        <Dropdown.Toggle variant="success" id="dropdown-basic">*/}
-                {/*            Dropdown Button*/}
-                {/*        </Dropdown.Toggle>*/}
+                <AppContext.Provider value={{ valueOptions, setBuildData2 }}>
+                    <ArmorBuilder armorPiece={'helm'} armorBuildData={helmBuildData}/>
+                    <ArmorBuilder armorPiece={'arms'} armorBuildData={arms_build_data}/>
+                    <ArmorBuilder armorPiece={'chest'} armorBuildData={chest_build_data}/>
+                    <ArmorBuilder armorPiece={'legs'} armorBuildData={legs_build_data}/>
+                    <ArmorBuilder armorPiece={'class'} armorBuildData={class_build_data}/>
+                </AppContext.Provider>
 
-                {/*        <Dropdown.Menu>*/}
-                {/*            <Dropdown.Item eventKey="1" onSelect={(e) => setSelectVal(e)}>Action</Dropdown.Item>*/}
-                {/*            <Dropdown.Item eventKey="2" onSelect={(e) => setSelectVal(e)}>Another action</Dropdown.Item>*/}
-                {/*            <Dropdown.Item eventKey="3" onSelect={(e) => setSelectVal(e)}>Something else</Dropdown.Item>*/}
-                {/*        </Dropdown.Menu>*/}
-                {/*    </Dropdown>*/}
-                {/*    <Table striped bordered hover>*/}
-                {/*        <thead>*/}
-                {/*            <tr>*/}
-                {/*                <th>#</th>*/}
-                {/*                <th>Mod Name</th>*/}
-                {/*                <th>Slot</th>*/}
-                {/*                <th>Affinity</th>*/}
-                {/*            </tr>*/}
-                {/*        </thead>*/}
-                {/*        <tbody>*/}
-                {/*        {buildProductHeaderTRs()}*/}
-                {/*        </tbody>*/}
-                {/*    </Table>*/}
-                {/*    <ButtonComponent onClickFunction={getSomeData} label={"Get Data"}/>*/}
 
-                {/*</div>*/}
+                <ButtonComponent onClickFunction={postBuildDataLocal} label={"Submit"}/>
             </div>
             <div>
                 {outputRawAsStuff()}

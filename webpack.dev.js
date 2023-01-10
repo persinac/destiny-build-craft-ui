@@ -11,7 +11,6 @@ module.exports = merge(common, {
     },
     plugins: [
         new webpack.DefinePlugin({
-            "FOO": JSON.stringify("bar"),
             "process.env.API_URL": JSON.stringify("http://localhost:8000")
         }),
     ]
