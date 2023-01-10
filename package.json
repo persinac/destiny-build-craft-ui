@@ -23,7 +23,7 @@
     "dotenv": "latest"
   },
   "scripts": {
-    "start-dev": "webpack serve --open --hot --config webpack.dev.js --env ENVIRONMENT=development",
+    "start:dev": "webpack serve --open --hot --config webpack.dev.js --env ENVIRONMENT=development",
     "build": "webpack --config webpack.production.js",
     "start:prod": "node server.js",
     "postinstall": "semantic-ui-css-patch"

@@ -33,6 +33,7 @@ const UserInput = () => {
     }, [modList, modAttrList])
 
     const parseValueOptionsForDropdown = () => {
+        console.log(process.env.API_URL)
         const listOfObjs = []
         modList.forEach((val, idx) => {
             listOfObjs.push({ key: val['id'], value: val['id'], text: val['name'] })
@@ -121,7 +122,7 @@ const UserInput = () => {
 
 
     const getModData = () => {
-        fetch(`https://destinybuildcraft.io/api/mods`,
+        fetch(`${process.env.API_URL}/api/mods`,
             {
                 method: "GET",
                 headers: {
@@ -137,7 +138,7 @@ const UserInput = () => {
     }
 
     const getModAttrData = () => {
-        fetch(`https://destinybuildcraft.io/api/mods/attributes`,
+        fetch(`${process.env.API_URL}/api/mods/attributes`,
             {
                 method: "GET",
                 headers: {
@@ -153,7 +154,7 @@ const UserInput = () => {
     }
 
     const postBuildData = () => {
-        fetch(`https://destinybuildcraft.io/api/build`,
+        fetch(`${process.env.API_URL}/api/build`,
             {
                 method: "POST",
                 body: JSON.stringify({"mod_ids": helmBuildData}),
