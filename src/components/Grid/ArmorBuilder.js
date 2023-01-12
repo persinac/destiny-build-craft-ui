@@ -24,23 +24,23 @@ const GridInput = ({ armorPiece, armorBuildData }) => {
     return (
         <div>
             <Grid verticalAlign={"middle"}>
-                <Grid.Row columns={7}>
-                    <Grid.Column>
+                <Grid.Row columns={6}>
+                    <Grid.Column width={1}>
                         <h5>{`${armorPiece}`}</h5>
                     </Grid.Column>
-                    <Grid.Column>
+                    <Grid.Column width={3}>
                         <DropdownExampleSearchSelection idx={0}/>
                     </Grid.Column>
-                    <Grid.Column>
+                    <Grid.Column width={3}>
                         <DropdownExampleSearchSelection idx={1}/>
                     </Grid.Column>
-                    <Grid.Column>
+                    <Grid.Column width={3}>
                         <DropdownExampleSearchSelection idx={2}/>
                     </Grid.Column>
-                    <Grid.Column>
+                    <Grid.Column width={3}>
                         <DropdownExampleSearchSelection idx={3}/>
                     </Grid.Column>
-                    <Grid.Column>
+                    <Grid.Column width={3}>
                         <DropdownExampleSearchSelection idx={4}/>
                     </Grid.Column>
                 </Grid.Row>

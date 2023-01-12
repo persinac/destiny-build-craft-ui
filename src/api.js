@@ -20,11 +20,11 @@ export const getModAttrData = async () => {
     return await response.json()
 }
 
-export const postBuildData = async (listOfModIds) => {
+export const postBuildData = async (listOfModIds, sameSubclass) => {
     const response = await fetch(`${process.env.API_URL}/api/build`,
         {
             method: "POST",
-            body: JSON.stringify({"mod_ids": listOfModIds}),
+            body: JSON.stringify({"mod_ids": listOfModIds, "same_subclass": sameSubclass}),
             headers: {
                 'Content-Type': 'application/json'
             }
